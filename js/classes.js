@@ -1,4 +1,4 @@
-// Book Constructor
+// Book Class
 class Book{
 	constructor(title, author, isbn) {
 		this.title = title;
@@ -7,7 +7,7 @@ class Book{
 	}
 }
 
-// UI Constructor
+// UI Class
 class UI{
 	// Add book to list
 	addBookToList(book){
@@ -55,11 +55,62 @@ class UI{
 	// Delete book
 	deleteBook(target){
 		if (target.className === 'delete') {
+			// Delete tr element from DOM
 			target.parentElement.parentElement.remove();
 		}
 	}
 }
 
+// Class for localStorage
+class Store{
+	// Get books from localStorage
+	static getBooks(){
+		let books;
+		// If LS empty init empty array
+		if (localStorage.getItem('books') === null) {
+			books = [];
+		} else {
+			// Get items as array of objects
+			books = JSON.parse(localStorage.getItem('books'));
+		}
+		return books;
+	}
+
+	// Display books
+	static displayBooks(){
+		const books = Store.getBooks();
+		// Display books list from LS
+		books.forEach(function(book){
+			const ui = new UI;
+			ui.addBookToList(book);
+		});
+	}
+
+	// Add book to localStorage
+	static addBook(book){
+		const books = Store.getBooks();
+		// Add new book to current books array
+		books.push(book);
+		// Update books array in LS
+		localStorage.setItem('books', JSON.stringify(books));
+	}
+
+	// Remove book from localStorage
+	static removeBook(isbn){
+		const books = Store.getBooks();
+		books.forEach(function(book, index){
+			// Delete book if current ISBN from array is the same from DOM
+			if(book.isbn === isbn) {
+				books.splice(index, 1);
+			}
+		});
+		// Update books array in LS
+		localStorage.setItem('books', JSON.stringify(books));
+	}
+}
+
+// DOM Load Event
+document.addEventListener('DOMContentLoaded', Store.displayBooks);
 
 // Event Listener for add book
 document.getElementById('book-form').addEventListener('submit', function(e){
@@ -78,6 +129,8 @@ document.getElementById('book-form').addEventListener('submit', function(e){
 	} else {
 		// Add book to list
 		ui.addBookToList(book);
+		// Add to LS
+		Store.addBook(book);
 		// Show success alert
 		ui.showAlert('Book Added!', 'success');
 		// Clear form fields
@@ -88,8 +141,14 @@ document.getElementById('book-form').addEventListener('submit', function(e){
 
 // Event Listener for delete book
 document.getElementById('book-list').addEventListener('click', function(e){
+	// Instantiate UI
 	const ui = new UI();
+	// Delete book from DOM
 	ui.deleteBook(e.target);
+	// Delete book from LS based on ISBN value
+	Store.removeBook(e.target.parentElement.previousElementSibling.textContent);
+	// Show alert
 	ui.showAlert('Book Removed!', 'success');
+	// Prevent default
 	e.preventDefault();
 });
