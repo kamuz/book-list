@@ -85,7 +85,7 @@ document.getElementById('book-form').addEventListener('submit', function(e){
 
 // Event Listener for delete book
 document.getElementById('book-list').addEventListener('click', function(e){
-	ui = new UI();
+	const ui = new UI();
 	ui.deleteBook(e.target);
 	ui.showAlert('Book Removed!', 'success');
 	e.preventDefault();
