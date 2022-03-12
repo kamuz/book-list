@@ -1,3 +1,13 @@
+body
+h1, h2, h3,
+button, input {
+	font-family: 'Raleway', sans-serif;
+}
+
+input[type="submit"] {
+	font-weight: 600;
+}
+
 .success, .error {
 	color: white;
 	padding: 5px;
