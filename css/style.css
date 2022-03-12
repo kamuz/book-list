@@ -21,3 +21,9 @@ input[type="submit"] {
 .error {
 	background: red;
 }
+
+.delete {
+	text-decoration: none;
+	font-size: 24px;
+	color: red;
+}
